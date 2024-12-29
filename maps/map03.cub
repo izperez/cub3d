@@ -1,13 +1,11 @@
+11111111111111
+10000000000001
+11111111111111
+
+C 0, 0, 0
+F 250, 100, 100
+
 NO ./assets/armenistan.xpm
 SO ./assets/pakistan.xpm
 WE ./assets/turkmenistan.xpm
 EA ./assets/uzbekistan.xpm
-
-F 200, 100, 50
-C 256, 255, 100
-
-11111111111111
-10000000000001
-10000000N00001
-10000000000001
-11111111111111

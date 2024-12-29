@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   0x_freedom.c                                       :+:      :+:    :+:   */
+/*   00_freedom.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: izperez <izperez@student.42.fr>            +#+  +:+       +#+        */
+/*   By: adlopez- <adlopez-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/26 14:31:51 by adrian            #+#    #+#             */
-/*   Updated: 2024/12/06 11:33:32 by izperez          ###   ########.fr       */
+/*   Created: 2024/12/22 20:47:15 by adlopez-          #+#    #+#             */
+/*   Updated: 2024/12/23 11:10:10 by adlopez-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,11 @@
 
 void	ft_free_split(char **data)
 {
-	int idx;
+	int	idx;
 
 	idx = 0;
+	if (!data)
+		return ;
 	while (data[idx])
 		free(data[idx++]);
 	free(data);
@@ -25,23 +27,33 @@ void	ft_free_split(char **data)
 
 void	ft_free_checker(t_checks *checker)
 {
-	free(checker->north_texture);
-	free(checker->south_texture);
-	free(checker->west_texture);
-	free(checker->east_texture);
-	ft_free_split(checker->map);
+	if (checker->n_texture)
+		free(checker->n_texture);
+	if (checker->s_texture)
+		free(checker->s_texture);
+	if (checker->w_texture)
+		free(checker->w_texture);
+	if (checker->e_texture)
+		free(checker->e_texture);
+	if (checker->map)
+		ft_free_split(checker->map);
 	free(checker);
 	return ;
 }
 
-void	ft_free_semichecker(t_checks *checker)
+void	ft_free_semichecker(t_checks **checker)
 {
-	free(checker->north_texture);
-	free(checker->south_texture);
-	free(checker->west_texture);
-	free(checker->east_texture);
-	free(checker);
-	printf("ERROR: Bad map format.\n");
+	if ((*checker)->n_texture)
+		free((*checker)->n_texture);
+	if ((*checker)->s_texture)
+		free((*checker)->s_texture);
+	if ((*checker)->w_texture)
+		free((*checker)->w_texture);
+	if ((*checker)->e_texture)
+		free((*checker)->e_texture);
+	free(*checker);
+	printf("ERROR: Bad map.cub format.\n");
+	exit (1);
 }
 
 void	ft_free_data(t_data *data)
@@ -59,5 +71,6 @@ void	ft_free_data(t_data *data)
 	free(data->w_texture);
 	free(data->e_texture);
 	free(data->mlx);
+	free(data->ray);
 	return ;
 }

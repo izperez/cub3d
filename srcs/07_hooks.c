@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: izperez <izperez@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/02 12:29:39 by izperez           #+#    #+#             */
-/*   Updated: 2024/12/11 13:56:08 by izperez          ###   ########.fr       */
+/*   Created: 2024/12/22 20:50:51 by adlopez-          #+#    #+#             */
+/*   Updated: 2024/12/29 11:42:29 by izperez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,69 +14,86 @@
 
 static void	key_press_aux(t_data *data, double move_x, double move_y, int mode)
 {
-	t_pos *player;
-	float tmp_x;
-	float tmp_y;
+	t_pos	*player;
+	float	tmp_x;
+	float	tmp_y;
 
 	player = data->playerpos;
-
-	// Dependiendo del modo (hacia adelante o hacia atrás), ajustamos las coordenadas
-	if (mode == 1) // Movimiento hacia atrás
+	if (mode == 1)
 	{
 		tmp_x = player->x - (move_x * 0.1);
 		tmp_y = player->y - (move_y * 0.1);
 	}
-	else // Movimiento hacia adelante
+	else
 	{
 		tmp_x = player->x + (move_x * 0.1);
 		tmp_y = player->y + (move_y * 0.1);
 	}
-
-	// Validación de colisión con muros (1) o fuera de los límites (espacio vacío ' ')
-	if (data->map->grid[(int)(tmp_x)][(int)(tmp_y)] != '1' && data->map->grid[(int)tmp_x][(int)tmp_y] != ' ')
+	if (ft_isinmap(data->map, tmp_y + 0.01, tmp_x) == 1 && \
+		ft_isinmap(data->map, tmp_y - 0.01, tmp_x) == 1 && \
+		ft_isinmap(data->map, tmp_y, tmp_x + 0.01) == 1 && \
+		ft_isinmap(data->map, tmp_y, tmp_x - 0.01) == 1)
 	{
 		player->x = tmp_x;
 		player->y = tmp_y;
 	}
-
 	data->playerpos = player;
+}
+
+int	ft_isinmap(t_map *map, float x, float y)
+{
+	int	map_x;
+	int	map_y;
+
+	map_x = (int)x;
+	map_y = (int)y;
+	if (map->grid[map_x][map_y] == '1')
+		return (0);
+	return (1);
+}
+
+static void	ft_hooks_utils(int keycode, t_data *data)
+{
+	double	move_x;
+	double	move_y;
+
+	if (keycode == D)
+	{
+		move_x = cos(data->playerpos->dir);
+		move_y = sin(data->playerpos->dir);
+		key_press_aux(data, move_x, move_y, 2);
+	}
+	else if (keycode == A)
+	{
+		move_x = cos(data->playerpos->dir);
+		move_y = sin(data->playerpos->dir);
+		key_press_aux(data, move_x, move_y, 1);
+	}
 }
 
 int	ft_hooks(int keycode, t_data *data)
 {
-	double move_x, move_y;
+	double	move_x;
+	double	move_y;
 
-	//system("clear");
-	// Cálculo de la dirección para cada tecla
 	if (keycode == S)
 	{
-		move_x = cos(data->playerpos->dir + PI / 2); // 90 grados a la izquierda
+		move_x = cos(data->playerpos->dir + PI / 2);
 		move_y = sin(data->playerpos->dir + PI / 2);
-		key_press_aux(data, move_x, move_y, 1); // Mover a la izquierda
+		key_press_aux(data, move_x, move_y, 1);
 	}
-	else if (keycode == W) // Movimiento hacia la derecha (perpendicular a la dirección)
+	else if (keycode == W)
 	{
-		move_x = cos(data->playerpos->dir - PI / 2); // 90 grados a la derecha
+		move_x = cos(data->playerpos->dir - PI / 2);
 		move_y = sin(data->playerpos->dir - PI / 2);
-		key_press_aux(data, move_x, move_y, 1); // Mover a la derecha
+		key_press_aux(data, move_x, move_y, 1);
 	}
-	else if (keycode == D) // Movimiento hacia adelante (en la dirección actual)
-	{
-		move_x = cos(data->playerpos->dir); // Dirección hacia adelante
-		move_y = sin(data->playerpos->dir);
-		key_press_aux(data, move_x, move_y, 2); // Mover hacia adelante
-	}
-	else if (keycode == A) // Movimiento hacia atrás (en la dirección opuesta)
-	{
-		move_x = cos(data->playerpos->dir); // Dirección hacia atrás
-		move_y = sin(data->playerpos->dir);
-		key_press_aux(data, move_x, move_y, 1); // Mover hacia atrás
-	}
+	else if (keycode == D || keycode == A)
+		ft_hooks_utils(keycode, data);
 	else
 		ft_rotation(keycode, data);
 	return (keycode);
 }
-
 
 int	ft_rotation(int keycode, t_data *data)
 {
@@ -84,12 +101,9 @@ int	ft_rotation(int keycode, t_data *data)
 
 	angle = data->playerpos->dir;
 	if (keycode == RIGHT)
-		angle -= 0.015;
+		angle -= 0.065;
 	else if (keycode == LEFT)
-		angle += 0.015;
-	// else
-	// 	printf("error rotation %i\n", keycode);
-		
+		angle += 0.065;
 	data->playerpos->dir = angle;
 	return (keycode);
 }
